@@ -47,7 +47,9 @@ export const verficationOfUser = async (req, res) => {
       .send({ message: "User Verified SuccessFully!!", success: true });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).send({ message: "User Verification Failed!", success: false });
+    return res
+      .status(500)
+      .send({ message: "User Verification Failed!", success: false });
   }
 };
 
@@ -86,21 +88,69 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const logoutUser = async(req,res) => {
+export const logoutUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    await sessionModel.deleteMany({userId});
-    await userModel.findByIdAndUpdate(userId,{isLoggedIn:false});
-    return res.status(200).send({message:"User Logout SuccessFully!",success:true})
+    await sessionModel.deleteMany({ userId });
+    await userModel.findByIdAndUpdate(userId, { isLoggedIn: false });
+    return res
+      .status(200)
+      .send({ message: "User Logout SuccessFully!", success: true });
   } catch (error) {
     console.log(error.message);
-    return res.status(200).send({message:"User Logout Failed!",success:false})
+    return res
+      .status(200)
+      .send({ message: "User Logout Failed!", success: false });
   }
-}
-export const refreshAccessToken = async(req,res) => {
+};
+
+export const refreshAccessToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
-      if(!refreshToken) return res.status(401).send({message:""})
+    if (!refreshToken)
+      return res
+        .status(401)
+        .send({
+          message: "refreshToken is missing. Please Login!",
+          success: false,
+        });
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await userModel.findById(decoded.id);
+    if (!user)
+      return res
+        .status(404)
+        .send({ message: "User Not Found", success: false });
+    const hashedIncomingToken = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+      if(hashedIncomingToken !== user.refreshToken) return res.status(401).send({message:"Invalid Refresh Token!",success:false});
+      const accessToken = generateAccessToken(user);
+      const newRefreshToken = generateRefreshToken(user);
+      const hashedNewRefreshToken = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
+      user.refreshToken = hashedNewRefreshToken;
+      await user.save();
+      return res.status(200).cookie("accessToken",accessToken).cookie("refreshToken",refreshToken).send({message:"Regenerated RefreshToken SuccessFully!",success:false});
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({message:"Failed to generate RefreshToken",success:false,error});
+  }
+};
+
+export const forgotPassword = async (req,res) => {
+  try {
+    const {email} = req.body;
+    if(!email) return res.status(401).send({message:"Email is required!",success:false});
+    const user = await userModel.findOne({email});
+    if(!user) return res.status(404).send({message:"User not found!",success:false});
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const token = generateToken(user);
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
+
+    sendOtpEmail(otp,email,token)
   } catch (error) {
     
   }
