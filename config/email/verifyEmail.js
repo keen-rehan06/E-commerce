@@ -8,7 +8,7 @@ const _filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(_filename);
 
   const emailTemplateSource = fs.readFileSync(
-    path.join(_dirname, "template.hbs"),
+    path.join(_dirname, "verifyEmail.hbs"),
     "utf-8",
   );
   const template = handlebars.compile(emailTemplateSource);

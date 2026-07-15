@@ -4,6 +4,8 @@ import {
   generateToken,
 } from "../config/tokens/tokens.config.js";
 import { sessionModel } from "../models/session.model.js";
+import {sendOtpEmail} from "../config/email/sendOtpMail.js"
+import {verifyEmail} from "../config/email/verifyEmail.js";
 import { userModel } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
@@ -149,8 +151,8 @@ export const forgotPassword = async (req,res) => {
     user.otp = otp;
     user.otpExpiry = otpExpiry;
     await user.save();
-
-    sendOtpEmail(otp,email,token)
+    sendOtpEmail(otp,email,token);
+    
   } catch (error) {
     
   }
