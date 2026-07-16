@@ -4,20 +4,26 @@ import {
   generateToken,
 } from "../config/tokens/tokens.config.js";
 import { sessionModel } from "../models/session.model.js";
-import { sendOtpEmail } from "../config/email/sendOtpMail.js";
-import { verifyEmail } from "../config/email/verifyEmail.js";
+import { sendOtpEmail } from "../services/email/sendOtpMail.js";
+import { verifyEmail } from "../services/email/verifyEmail.js";
 import { userModel } from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import { roleModel } from "../models/roles.model.js";
 
 export const registerUser = async (req, res) => {
   try {
     const { email, password, name, username } = req.body;
     const hashPassword = await bcrypt.hash(password, 12);
+    const role = await roleModel.findOne({
+      name:"CUSTOMER",
+    })
+    if(!role) return res.status(404).send({message:"Role Not Found",success:false})
     const user = await userModel.create({
       email,
       name,
       username,
       password: hashPassword,
+      role:role._id
     });
     const token = generateToken(user);
     verifyEmail(token, email);
