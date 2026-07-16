@@ -1,4 +1,7 @@
-export const PERMISSIONS = [
+export const 
+
+export const ROLE_HIERARCHY = {
+SUPER_ADMIN :[
   
   // USER
   
@@ -136,9 +139,9 @@ export const PERMISSIONS = [
   
   "NOTIFICATION_READ",
   "NOTIFICATION_SEND",
-];
+],
 
-export const ADMIN = [
+ADMIN:[
   "USER_READ",
   "USER_UPDATE",
   "USER_BLOCK",
@@ -196,9 +199,9 @@ export const ADMIN = [
   "SETTING_READ",
 
   "NOTIFICATION_SEND"
-];
+],
 
-export const CUSTOMER = [
+ CUSTOMER:[
   "PRODUCT_READ",
 
   "CATEGORY_READ",
@@ -232,9 +235,9 @@ export const CUSTOMER = [
   "SHIPPING_READ",
 
   "NOTIFICATION_READ"
-];
+],
 
-export const VENDOR = [
+VENDOR:[
   "PRODUCT_CREATE",
   "PRODUCT_READ",
   "PRODUCT_UPDATE",
@@ -253,18 +256,18 @@ export const VENDOR = [
   "REPORT_READ",
 
   "NOTIFICATION_READ"
-];
+],
 
-export const DELIVERY_PARTNER = [
+DELIVERY_PARTNER:[
   "ORDER_READ",
 
   "SHIPPING_READ",
   "SHIPPING_UPDATE",
 
   "NOTIFICATION_READ"
-];  
+],
 
-export const SUPPORT = [
+SUPPORT:[
   "USER_READ",
 
   "ORDER_READ",
@@ -280,4 +283,5 @@ export const SUPPORT = [
   "REVIEW_READ",
 
   "NOTIFICATION_SEND"
-];
+]
+}
