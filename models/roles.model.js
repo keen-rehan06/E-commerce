@@ -8,7 +8,7 @@ const roleSchema = new mongoose.Schema({
         uppercase:true,
         trim:true
     },
-    permission:{
+    permissions:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"permission"
     }
