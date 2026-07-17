@@ -89,3 +89,10 @@ export const isLoggedIn = async (req,res,next) => {
     return res.status(500).send({message:"Internal Server Error",error});
   }
 }
+
+export const authorize = (...roles) => {
+   return (req,res,next) => {
+    if(!roles.includes(req.user.role)) return res.status(400).send({message:"Access Denied!",success:false});
+    next()
+   }
+}
